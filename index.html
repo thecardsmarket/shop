@@ -219,6 +219,7 @@
   let qty = 1;
   let selected = { card: "Red Card", condition: "No Warranty", price: 5, key: "red" };
   const conditions = { red: "No Warranty", blue: "Used", green: "Fresh", gold: "Personal" };
+  const maxQty = { red: 10, blue: 5, green: 3, gold: 1 };
   let verified = false;
 
   function startVerify() {
@@ -245,6 +246,8 @@
     row.classList.add('active');
     const key = row.dataset.card;
     selected = { card: row.querySelector('.card-name').textContent, condition: conditions[key], price: parseInt(row.dataset.price), key };
+    qty = 1;
+    document.getElementById('qty-display').textContent = 1;
     document.querySelectorAll('.card').forEach(c=>c.classList.toggle('selected',c.dataset.card===key));
     updateUI();
   }
@@ -253,11 +256,13 @@
     if (row) selectCard(row);
   }
   function changeQty(d) {
-    qty = Math.min(3,Math.max(1,qty+d));
+    const max = maxQty[selected.key] || 3;
+    qty = Math.min(max, Math.max(1, qty + d));
     document.getElementById('qty-display').textContent = qty;
-    document.getElementById('dec').disabled = qty<=1;
-    document.getElementById('inc').disabled = qty>=3;
+    document.getElementById('dec').disabled = qty <= 1;
+    document.getElementById('inc').disabled = qty >= max;
     updateUI();
+  }
   }
   function updateUI() {
     const total = selected.price * qty;
